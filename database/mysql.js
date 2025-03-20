@@ -21,6 +21,9 @@ sequelize.authenticate().then(() => {
     console.log(util.format('Error While Connecting To the My SQL Database. Error: %j', error))
 })
 
+await sequelize.sync({ force: true });
+console.log('All models were synchronized successfully.');
+
 db.sequelize = sequelize
 db.Sequelize = Sequelize
 
