@@ -1,10 +1,12 @@
 const userModel = require('./user-model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const schemas = require('./users-schema').schemas();
+const schemas = require('./users-schema').schemas;
 const constants = require('../../../utils/constants').constants;
 
-async function loginUser(req, res) {
+const service = function(){}
+
+service.loginUser = async function(req, res) {
     try {
         const {email, password} = req.body;
         const user = await userModel.findUserByEmail(email);
@@ -21,14 +23,14 @@ async function loginUser(req, res) {
         return {success: true, token: token};
     } catch (error) {
         return res.status(constants.httpStatusCode.failedOperation)
-            .json({
+            .send({
                 code: constants.httpStatusCode.failedOperation,
                 message: error.message
             });
     }
 }
 
-async function registerUser(req, res) {
+service.registerUser = async function (req, res) {
     try {
         const {email, password} = req.body;
         const validationErrors = schemas.validate(req.body, schemas.userRequest);
@@ -36,7 +38,7 @@ async function registerUser(req, res) {
 
         if (validationErrors.length > 0) {
             res.sendStatus(constants.httpStatusCode.badRequest)
-                .json({
+                .send({
                     code: constants.responseCodes.badRequest,
                     message: "Validation error",
                     errors: validationErrors
@@ -47,7 +49,7 @@ async function registerUser(req, res) {
 
         if (existingUser.success) {
             res.sendStatus(constants.httpStatusCode.conflict)
-                .json({
+                .send({
                     code: constants.responseCodes.conflict,
                     message: "User already exists"
                 });
@@ -56,7 +58,20 @@ async function registerUser(req, res) {
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await userModel.createUser({email: email, password: hashedPassword});
         if (!user.success) {
-            return {success: false, error: user.error};
+            res.sendStatus(constants.httpStatusCode.failedOperation)
+                .send({
+                    code: constants.responseCodes.failedOperation,
+                    message: "Failed to create user",
+                    error: user.error
+                });
+        }
+
+        if (!user.success) {
+            return res.status(constants.httpStatusCode.failedOperation)
+                .send({
+                    code: constants.httpStatusCode.failedOperation,
+                    message: user.error
+                });
         }
         return {success: true, data: user.data};
     } catch (error) {
@@ -64,7 +79,4 @@ async function registerUser(req, res) {
     }
 }
 
-module.exports = {
-    loginUser,
-    registerUser
-}
+module.exports = service;
