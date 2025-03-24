@@ -9,19 +9,60 @@ const service = function () {
 
 service.loginUser = async function (req, res) {
     try {
+        const validationErrors = schemas.validate(req.body, schemas.userRequest);
+        if (validationErrors.length > 0) {
+            return res.status(constants.httpStatusCode.badRequest)
+                .send({
+                    code: constants.responseCodes.badRequest,
+                    message: "Validation error",
+                    error: validationErrors[0]
+                });
+        }
+
         const {email, password} = req.body;
         const user = await userModel.findUserByEmail(email);
+        console.log("User: ", user);
+
         if (!user.success) {
-            return {success: false, error: "User not found"};
+            return res.status(constants.httpStatusCode.failedOperation)
+                .send({
+                    code: constants.responseCodes.failedOperation,
+                    message: "Failed to login",
+                    error: user.error
+                });
+        }
+
+        // Check if user exists
+        if (!user.data || Object.keys(user.data).length === 0) {
+            return res.status(constants.httpStatusCode.notFound)
+                .send({
+                    code: constants.responseCodes.notFound,
+                    message: "User not found"
+                });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.data.password);
         if (!isPasswordValid) {
-            return {success: false, error: "Invalid password"};
+            return res.status(constants.httpStatusCode.unauthorised)
+                .send({
+                    code: constants.httpStatusCode.unauthorised,
+                    message: "Invalid credentials"
+                });
         }
 
-        const token = jwt.sign({id: user.data.id}, process.env.JWT_SECRET, {expiresIn: '1h'});
-        return {success: true, token: token};
+        const token = jwt.sign({id: user.data.id}, process.env.JWT_SECRET_KEY, {expiresIn: process.env.JWT_SECRET_EXPIRY});
+        return res.status(constants.httpStatusCode.success)
+            .send({
+                code: constants.httpStatusCode.success,
+                message: "Login successful",
+                data: {
+                    user: {
+                        id: user.data.id,
+                        email: user.data.email
+                    },
+                    token: token
+                }
+            });
     } catch (error) {
         return res.status(constants.httpStatusCode.failedOperation)
             .send({
