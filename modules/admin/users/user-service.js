@@ -4,9 +4,10 @@ const jwt = require('jsonwebtoken');
 const schemas = require('./users-schema').schemas;
 const constants = require('../../../utils/constants').constants;
 
-const service = function(){}
+const service = function () {
+}
 
-service.loginUser = async function(req, res) {
+service.loginUser = async function (req, res) {
     try {
         const {email, password} = req.body;
         const user = await userModel.findUserByEmail(email);
@@ -34,21 +35,34 @@ service.registerUser = async function (req, res) {
     try {
         const {email, password} = req.body;
         const validationErrors = schemas.validate(req.body, schemas.userRequest);
-        console.log(validationErrors);
 
         if (validationErrors.length > 0) {
-            res.sendStatus(constants.httpStatusCode.badRequest)
+            return res.status(constants.httpStatusCode.badRequest)
                 .send({
                     code: constants.responseCodes.badRequest,
                     message: "Validation error",
-                    errors: validationErrors
+                    error: validationErrors[0]
                 });
         }
 
         const existingUser = await userModel.findUserByEmail(email);
 
-        if (existingUser.success) {
-            res.sendStatus(constants.httpStatusCode.conflict)
+        console.log("Existing User: ", existingUser);
+
+        if (!existingUser.success) {
+            return res.status(constants.httpStatusCode.failedOperation)
+                .send({
+                    code: constants.responseCodes.failedOperation,
+                    message: "Failed to create user",
+                    error: existingUser.error
+                });
+        }
+
+        // Check if user already exists
+        if (existingUser.data && existingUser.data.email === email) {
+            console.log("Existing User: User already exists");
+
+            return res.status(constants.httpStatusCode.conflict)
                 .send({
                     code: constants.responseCodes.conflict,
                     message: "User already exists"
@@ -57,8 +71,9 @@ service.registerUser = async function (req, res) {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await userModel.createUser({email: email, password: hashedPassword});
+
         if (!user.success) {
-            res.sendStatus(constants.httpStatusCode.failedOperation)
+            return res.status(constants.httpStatusCode.failedOperation)
                 .send({
                     code: constants.responseCodes.failedOperation,
                     message: "Failed to create user",
@@ -66,16 +81,19 @@ service.registerUser = async function (req, res) {
                 });
         }
 
-        if (!user.success) {
-            return res.status(constants.httpStatusCode.failedOperation)
-                .send({
-                    code: constants.httpStatusCode.failedOperation,
-                    message: user.error
-                });
-        }
-        return {success: true, data: user.data};
+        return res.status(constants.httpStatusCode.success)
+            .send({
+                code: constants.httpStatusCode.success,
+                message: "User registered successfully",
+                data: user.data
+            });
     } catch (error) {
-        return {success: false, error: error.message};
+        console.log("Error Caught: ", error);
+        return res.status(constants.httpStatusCode.failedOperation)
+            .send({
+                code: constants.httpStatusCode.failedOperation,
+                message: error.message
+            });
     }
 }
 

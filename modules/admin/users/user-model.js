@@ -12,7 +12,7 @@ userModel.findUserByEmail = async function (email) {
         })
 
         if (!user) {
-            return {success: false, error: "User not found"};
+            return {success: true, data: {}, error: "User not found"};
         }
 
         return {success: true, data: user};

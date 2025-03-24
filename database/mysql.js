@@ -30,7 +30,7 @@ sequelize.authenticate().then(() => {
 //     console.log(util.format('Error While Syncing My SQL Tables. Error: %j', error))
 // });
 
-console.log('All models were synchronized successfully.');
+// console.log('All models were synchronized successfully.');
 
 db.sequelize = sequelize
 db.Sequelize = Sequelize

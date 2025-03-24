@@ -37,23 +37,36 @@ schemas.userRequest = {
     properties: {
         email: {
             type: 'string',
-            required:
-                true
+            required: true,
+            format: 'email',
+            errorMessage: {
+                type: 'Email must be a string',
+                format: 'Invalid email format'
+            }
         },
         password: {
             type: 'string',
-            required:
-                true
+            required: true,
+            minLength: 6,
+            errorMessage: {
+                type: 'Password must be a string',
+                minLength: 'Password must be at least 6 characters long'
+            }
         }
     }
 }
 
 schemas.validate = function (object, schema) {
-    const errors = _validator.validate(object, schema).errors
+    const validationResult = _validator.validate(object, schema);
+    const errors = validationResult.errors.map(error => {
+        const property = error.property.replace('instance.', '');
+        return schema.properties[property].errorMessage[error.name] || error.stack;
+    });
+
     if (errors.length > 0) {
-        console.error(util.format('Schema validation failed for id:- %s errors:- %j', schema.id, errors))
+        console.error(util.format('Schema validation failed for id:- %s errors:- %j', schema.id, errors));
     }
-    return errors.length <= 0
+    return errors;
 }
 
 module.exports = {Users, schemas};
