@@ -10,10 +10,8 @@ CREATE TABLE IF NOT EXISTS categories
     id          SERIAL PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
     description TEXT,
-    brand_id    INTEGER      NOT NULL,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (brand_id) REFERENCES brands (id)
 );
 
 CREATE TABLE IF NOT EXISTS brands
@@ -21,8 +19,10 @@ CREATE TABLE IF NOT EXISTS brands
     id          SERIAL PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
     description TEXT,
+    category_id INTEGER      NOT NULL,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories (id)
 );
 
 -- CREATE TABLE IF NOT EXISTS packages
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS brands
 -- CREATE INDEX if not exists idx_product_variants_product_id ON product_variants (product_id);
 --
 --
--- -- Create a foreign key constraint between brand and categories on a new column
+-- -- Create a foreign key constraint between brands and categories on a new column
 -- ALTER TABLE brands
 --     ADD COLUMN brand_id INTEGER;
 --

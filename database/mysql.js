@@ -1,6 +1,9 @@
 const {Sequelize} = require('sequelize');
 const sequelizeTransforms = require('sequelize-transforms')
 const util = require('util')
+const fs = require("fs");
+const path = require("path");
+const {constants} = require('../utils/constants')
 
 const db = {};
 
@@ -14,6 +17,17 @@ const sequelize = new Sequelize({
 });
 
 sequelizeTransforms(sequelize)
+
+fs.readdirSync(path.join(__dirname, '../' + constants.moduleNames.models + '/')).forEach(function (file) {
+    const model = require(path.join(__dirname, '/../' + constants.moduleNames.models + '/' + file))(sequelize, Sequelize.DataTypes)
+    db[model.name] = model
+})
+
+Object.keys(db).forEach(function (modelName) {
+    if ('associate' in db[modelName]) {
+        db[modelName].associate(db)
+    }
+})
 
 sequelize.authenticate().then(() => {
     console.log(util.format('My SQL Database Connection is established Successfully.'))
