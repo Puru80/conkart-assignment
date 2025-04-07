@@ -178,5 +178,37 @@ service.deleteUnit = async function (req, res) {
     }
 }
 
+service.unitStatusManage = async function(req, res){
+    if (schemas.validate(req, schemas.statusManage)) {
+        try {
+            const {unit_id, is_active} = req.body
+
+            const unitStatusUpdated = await unit.unitStatusManage({
+                unit_id,
+                is_active
+            });
+
+            if (unitStatusUpdated.unit_id) {
+                res.status(constants.httpStatusCode.success).send({
+                    code: constants.responseCodes.successfulOperation,
+                    message: "Unit status updated successfully",
+                    data: unitStatusUpdated
+                })
+            }
+        } catch (error) {
+            res.status(constants.httpStatusCode.success).send({
+                code: constants.responseCodes.failedOperation,
+                message: constants.messageKeys.en.msg_failed
+            })
+        }
+    } else {
+        // Incomplete Data
+        return res.status(constants.httpStatusCode.badRequest).send({
+            code: constants.responseCodes.revalidation,
+            message: "Incomplete Data"
+        })
+    }
+}
+
 
 module.exports = service

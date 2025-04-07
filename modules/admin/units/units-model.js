@@ -118,4 +118,23 @@ unit.getUnitDetails = async (requestData) => {
     }
 }
 
+unit.statusManage = async (requestData) => {
+    try {
+        return await Units.update(
+            {
+                is_active: requestData.is_active,
+                updated_by: requestData.user.id
+            },
+            {
+                where: {
+                    unit_id: requestData.unit_id
+                }
+            }
+        )
+    } catch (error) {
+        logger.error(util.format('Error in unit.unitUpdate while Updating Unit details. Error: %j', error.message))
+        throw new Error(error)
+    }
+}
+
 module.exports = unit
