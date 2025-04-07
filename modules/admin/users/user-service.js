@@ -21,7 +21,6 @@ service.loginUser = async function (req, res) {
 
         const {email, password} = req.body;
         const user = await userModel.findUserByEmail(email);
-        console.log("User: ", user);
 
         if (!user.success) {
             return res.status(constants.httpStatusCode.failedOperation)
