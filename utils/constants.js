@@ -26,7 +26,7 @@ export const constants = {
     moduleNames: {
         models: 'models',
         categories: 'categories',
-        masterCategories: 'master-categories',
+        masterCategories: 'master-master-categories',
         users: 'users',
         brands: 'brands',
         products: 'products',
