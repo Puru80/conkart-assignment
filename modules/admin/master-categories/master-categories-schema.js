@@ -7,43 +7,11 @@ const schemas = function () {
 }
 
 schemas.getMasterCategories = {
-    id: '/getMasterCategories',
+    id: '/getMasterCategoryDetails',
     type: 'object',
     properties: {
         master_category_id: {
-            type: ['empty', 'null', 'integer'],
-            required: false
-        },
-        search: {
-            type: ['empty', 'null', 'string'],
-            required: false
-        },
-        is_active: {
-            type: ['boolean', 'empty', 'null', 'integer'],
-            required: false
-        },
-        sort_by: {
-            type: ['empty', 'null', 'string'],
-            required: false
-        },
-        sort_type: {
-            type: ['empty', 'null', 'string'],
-            required: false
-        },
-        from_date: {
-            type: ['empty', 'null', 'string'],
-            required: false
-        },
-        to_date: {
-            type: ['empty', 'null', 'string'],
-            required: false
-        },
-        page: {
-            type: ['empty', 'null', 'string'],
-            required: false
-        },
-        limit: {
-            type: ['empty', 'null', 'string'],
+            type: 'integer',
             required: false
         }
     }
@@ -60,14 +28,6 @@ schemas.createMasterCategory = {
         },
         master_category_description: {
             type: 'string',
-            required: false
-        },
-        master_category_sequence: {
-            type: ['string', 'integer'],
-            required: true
-        },
-        is_active: {
-            type: ['boolean', 'empty', 'null', 'integer'],
             required: false
         }
     }
@@ -88,10 +48,6 @@ schemas.updateMasterCategory = {
         },
         master_category_description: {
             type: 'string',
-            required: false
-        },
-        master_category_sequence: {
-            type: ['string', 'integer'],
             required: false
         },
         is_active: {

@@ -183,7 +183,7 @@ service.unitStatusManage = async function(req, res){
         try {
             const {unit_id, is_active} = req.body
 
-            const unitStatusUpdated = await unit.unitStatusManage({
+            const unitStatusUpdated = await unit.statusManage({
                 unit_id,
                 is_active
             });
