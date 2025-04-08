@@ -29,8 +29,35 @@ service.getMasterCategoryDetails = async function (req, res) {
             if (masterCategoryDetails.success) {
                 res.status(constants.httpStatusCode.success).send({
                     code: constants.responseCodes.successfulOperation,
-                    message: "Master Category fetched successfully",
+                    message: "Category fetched successfully",
                     data: masterCategoryDetails.data
+                })
+            } else {
+                res.status(constants.httpStatusCode.notFound).send({
+                    code: constants.responseCodes.notFound,
+                    message: "Category not found"
+                })
+            }
+        } catch (error) {
+            res.status(constants.httpStatusCode.success).send({
+                code: constants.responseCodes.failedOperation,
+                message: constants.messageKeys.en.msg_failed
+            })
+        }
+    }
+}
+
+service.updateMasterCategory = async function (req, res) {
+    if(schemas.validate(req.body, schemas.updateMasterCategory)) {
+        try {
+            const requestData = req.body;
+            const masterCategoryDetails = await masterCategory.updateMasterCategory(requestData);
+
+            if (masterCategoryDetails) {
+                res.status(constants.httpStatusCode.success).send({
+                    code: constants.responseCodes.successfulOperation,
+                    message: "Master Category updated successfully",
+                    data: masterCategoryDetails
                 })
             } else {
                 res.status(constants.httpStatusCode.notFound).send({
@@ -46,3 +73,5 @@ service.getMasterCategoryDetails = async function (req, res) {
         }
     }
 }
+
+module.exports = service;

@@ -133,8 +133,6 @@ service.updateUnit = async function (req, res) {
     }
 }
 
-// Refer the above logic PLS.
-
 //TODO: Need to check if the unit is used in any product
 service.deleteUnit = async function (req, res) {
     if (schemas.validate(req, schemas.unitDetails)) {
