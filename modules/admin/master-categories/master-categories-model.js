@@ -83,11 +83,12 @@ masterCategory.createMasterCategory = async (requestData) => {
 
 masterCategory.update = async (requestData) => {
     try {
-        return await masterCategoryModel.update(
+        const masterCategoryUpdated = await masterCategoryModel.update(
             {
                 master_category_name: requestData.master_category_name,
                 master_category_description: requestData.master_category_description,
-                is_active: requestData.is_active
+                is_active: requestData.is_active,
+                updated_by: requestData.user.user_id
             },
             {
                 where: {
@@ -95,7 +96,23 @@ masterCategory.update = async (requestData) => {
                 }
             }
         )
+
+        console.log("masterCategoryUpdated", masterCategoryUpdated);
+
+        if (masterCategoryUpdated == null || masterCategoryUpdated[0] == 0) {
+            return {success: true, error: "Master Category not updated"}
+        } else {
+            const masterCategoryDetails = await masterCategoryModel
+                .findByPk(requestData.master_category_id)
+
+            if (!masterCategoryDetails) {
+                return {success: true, data: {}, error: "Master Category not found"}
+            } else {
+                return {success: true, data: masterCategoryDetails}
+            }
+        }
     } catch (error) {
+        logger.error(error)
         logger.error(util.format('Error in masterCategory.update while updating master category details. Error: %j', error.message))
         throw new Error(error)
     }

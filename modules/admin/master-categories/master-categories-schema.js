@@ -6,7 +6,7 @@ const _validator = new Validator()
 const schemas = function () {
 }
 
-schemas.getMasterCategories = {
+schemas.getMasterCategoryDetails = {
     id: '/getMasterCategoryDetails',
     type: 'object',
     properties: {
