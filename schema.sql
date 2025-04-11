@@ -5,25 +5,28 @@ CREATE TABLE IF NOT EXISTS users
     password VARCHAR(255)        NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS categories
+CREATE TABLE IF NOT EXISTS master_categories
 (
-    id          SERIAL PRIMARY KEY,
-    name        VARCHAR(255) NOT NULL,
-    description TEXT,
+    master_category_id          SERIAL PRIMARY KEY,
+    master_category_name        VARCHAR(255) NOT NULL,
+    master_category_description TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_by            INTEGER,
+    updated_by            INTEGER,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS brands
-(
-    id          SERIAL PRIMARY KEY,
-    name        VARCHAR(255) NOT NULL,
-    description TEXT,
-    category_id INTEGER      NOT NULL,
-    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES categories (id)
-);
+# CREATE TABLE IF NOT EXISTS brands
+# (
+#     id          SERIAL PRIMARY KEY,
+#     name        VARCHAR(255) NOT NULL,
+#     description TEXT,
+#     category_id INTEGER      NOT NULL,
+#     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+#     updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+#     FOREIGN KEY (category_id) REFERENCES categories (id)
+# );
 
 -- CREATE TABLE IF NOT EXISTS packages
 -- (

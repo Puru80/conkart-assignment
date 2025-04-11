@@ -5,13 +5,64 @@ const masterCategory = require('./master-categories-model')
 const service = function () {
 }
 
+service.create = async function (req, res) {
+    if (schemas.validate(req.body, schemas.createMasterCategory)) {
+        try {
+            const requestData = req.body;
+            console.log("requestData: ", requestData);
+
+            // Check if the master category already exists
+            const existingCategory = await masterCategory.getMasterCategoryByName(requestData);
+            console.log("existingCategory: ", existingCategory);
+
+            if (existingCategory && existingCategory.data) {
+                return res.status(constants.httpStatusCode.success).send({
+                    code: constants.responseCodes.conflict,
+                    message: "Master Category already exists"
+                });
+            }
+
+            const masterCategoryDetails = await masterCategory.createMasterCategory(requestData);
+
+            if (masterCategoryDetails.data.dataValues) {
+                if (masterCategoryDetails.data.dataValues.master_category_id) {
+                    res.status(constants.httpStatusCode.success)
+                        .send({
+                            code: constants.responseCodes.successfulOperation,
+                            message: "Master Category created successfully",
+                            data: masterCategoryDetails
+                        })
+                } else {
+                    res.status(constants.httpStatusCode.failedOperation).send({
+                        code: constants.responseCodes.failedOperation,
+                        message: constants.messageKeys.en.msg_failed
+                    })
+                }
+            }
+
+        } catch (error) {
+            res.status(constants.httpStatusCode.success).send({
+                code: constants.responseCodes.failedOperation,
+                message: constants.messageKeys.en.msg_failed
+            })
+        }
+    } else {
+        // Incomplete Data
+        return res.status(constants.httpStatusCode.badRequest).send({
+            code: constants.responseCodes.revalidation,
+            message: constants.messageKeys.en.msg_revalidate
+        })
+    }
+}
+
 service.getMasterCategories = async function (req, res) {
     try {
         const masterCategories = await masterCategory.getAllMasterCategories();
+        console.log("masterCategories: ", masterCategories);
         res.status(constants.httpStatusCode.success).send({
             code: constants.responseCodes.successfulOperation,
             message: "Master Categories fetched successfully",
-            data: masterCategories
+            data: masterCategories.data
         })
     } catch (error) {
         res.status(constants.httpStatusCode.success).send({
@@ -48,12 +99,12 @@ service.getMasterCategoryDetails = async function (req, res) {
 }
 
 service.updateMasterCategory = async function (req, res) {
-    if(schemas.validate(req.body, schemas.updateMasterCategory)) {
+    if (schemas.validate(req.body, schemas.updateMasterCategory)) {
         try {
             const requestData = req.body;
-            const masterCategoryDetails = await masterCategory.updateMasterCategory(requestData);
+            const masterCategoryDetails = await masterCategory.update(requestData);
 
-            if (masterCategoryDetails) {
+            if (masterCategoryDetails.master_category_id) {
                 res.status(constants.httpStatusCode.success).send({
                     code: constants.responseCodes.successfulOperation,
                     message: "Master Category updated successfully",

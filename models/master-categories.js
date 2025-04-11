@@ -25,11 +25,11 @@ const masterCategories = sequelize.define("masterCategories", {
     },
     created_by: {
         type: DataTypes.INTEGER({length: 10}),
-        allowNull: false
+        allowNull: true
     },
     updated_by: {
         type: DataTypes.INTEGER({length: 10}),
-        allowNull: false
+        allowNull: true
     }
 }, {
     tableName: 'master_categories',

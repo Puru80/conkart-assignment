@@ -7,6 +7,8 @@ const constants = require('../../../utils/constants').constants;
 const service = function () {
 }
 
+//TODO: Rectify HTTP Status codes
+
 service.loginUser = async function (req, res) {
     try {
         const validationErrors = schemas.validate(req.body, schemas.userRequest);
