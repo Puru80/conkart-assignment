@@ -1,6 +1,8 @@
 const {DataTypes} = require("sequelize");
 const sqlInstance = require("../database/mysql");
 const sequelize = sqlInstance.sequelize;
+const masterCategories = require("./master-categories").masterCategories;
+const Users = require('../modules/admin/users/users-schema').Users;
 
 const categories = sequelize.define('categories', {
     category_id: {
@@ -41,50 +43,49 @@ const categories = sequelize.define('categories', {
     }
 }, {
     tableName: 'categories',
-    classMethod: {},
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
 })
 
-/*categories.associate = function (models) {
-    categories.hasMany(models.products, {
-        foreignKey: 'category_id',
-        targetKey: 'category_id',
-        constraints: false
-    })
-    categories.hasOne(models.category_unit_mapping, {
-        foreignKey: 'category_id',
-        sourceKey: 'category_id',
-        constraints: false
-    })
-    categories.belongsTo(models.admin_users, {
-        foreignKey: 'created_by',
-        targetKey: 'admin_user_id',
-        as: 'creator',
-        constraints: false
-    })
-    categories.belongsTo(models.admin_users, {
-        foreignKey: 'updated_by',
-        targetKey: 'admin_user_id',
-        as: 'updater',
-        constraints: false
-    })
-    categories.hasMany(models.attributes, {
-        foreignKey: 'category_id',
-        targetKey: 'category_id',
-        constraints: false
-    })
-    categories.hasMany(models.brands, {
-        foreignKey: 'category_id',
-        targetKey: 'category_id',
-        constraints: false
-    })
-    categories.belongsTo(models.master_categories, {
-        foreignKey: 'master_category_id',
-        targetKey: 'master_category_id',
-        constraints: false
-    })
-}*/
+// categories.hasMany(models.products, {
+//     foreignKey: 'category_id',
+//     targetKey: 'category_id',
+//     constraints: false
+// })
+// categories.hasOne(models.category_unit_mapping, {
+//     foreignKey: 'category_id',
+//     sourceKey: 'category_id',
+//     constraints: false
+// })
 
-module.exports = categories;
+categories.belongsTo(Users, {
+    foreignKey: 'created_by',
+    targetKey: 'admin_user_id',
+    as: 'creator',
+    constraints: false
+})
+categories.belongsTo(Users, {
+    foreignKey: 'updated_by',
+    targetKey: 'admin_user_id',
+    as: 'updater',
+    constraints: false
+})
+// categories.hasMany(models.attributes, {
+//     foreignKey: 'category_id',
+//     targetKey: 'category_id',
+//     constraints: false
+// })
+// categories.hasMany(models.brands, {
+//     foreignKey: 'category_id',
+//     targetKey: 'category_id',
+//     constraints: false
+// })
+
+categories.belongsTo(masterCategories,{
+    foreignKey: 'master_category_id',
+    targetKey: 'master_category_id',
+    constraints: false
+})
+
+module.exports = {categories};

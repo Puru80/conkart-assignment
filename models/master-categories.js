@@ -2,7 +2,7 @@ const {DataTypes} = require("sequelize");
 const sqlInstance = require("../database/mysql");
 const sequelize = sqlInstance.sequelize;
 
-const masterCategories = sequelize.define("masterCategories", {
+const masterCategories = sequelize.define("master_categories", {
     master_category_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -39,6 +39,6 @@ const masterCategories = sequelize.define("masterCategories", {
 })
 
 
-module.exports = masterCategories;
+module.exports = {masterCategories};
 
 

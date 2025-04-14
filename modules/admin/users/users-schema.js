@@ -8,7 +8,7 @@ const _validator = new Validator()
 const schemas = function () {
 };
 
-const Users = sequelize.define("User", {
+const Users = sequelize.define("user", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,

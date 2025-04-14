@@ -1,4 +1,4 @@
-const Users = require("./users-schema").Users;
+const Users = require("../../../models/users").Users;
 
 const userModel = function () {
 };

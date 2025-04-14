@@ -1,4 +1,4 @@
-const masterCategoryModel = require('../../../models/master-categories')
+const masterCategoryModel = require('../../../models/master-categories').masterCategories
 const logger = require('../../../utils/logger')
 const util = require('util')
 
